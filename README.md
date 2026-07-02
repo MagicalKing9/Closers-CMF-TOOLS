@@ -5,7 +5,11 @@ CMF PAK/UNPACK ，Supports CMF versions V1 to V10，Break through file size limi
 
 软件功能：支持CMF V1到V10封包解包，已经突破文件大小限制，支持常用文件X/PNG/DDS/OGG 等替换。
 
-本程序已完全开源，目前提供的是最初版v1.0，打开是命令行窗口界面，使用数字输入进行操作，功能齐全，过几天将更新GUI版，后续源码和编译后的工具会同步更新至github。
+本程序已完全开源，目前提供的是v1.1版，打开是命令行窗口界面，使用数字输入进行操作，功能齐全，过几天将更新GUI版，后续源码和编译后的工具会同步更新至github。
+
+# [2026.7.2]v1.1更新说明
+
+修复程序读取部分CMF时因识别不出带韩文名称的资源文件而导致报错Debug Error! (abort() has been called) 的问题。
 
 # 程序使用介绍：
 
