@@ -1,5 +1,5 @@
-﻿/**
- * Closers CMF TOOLS 解包/封包工具 v1.0版
+/**
+ * Closers CMF TOOLS 解包/封包工具 v1.1版
  */
 
 #include <iostream>
@@ -284,7 +284,7 @@ int unpack_single_cmf(const fs::path& cmf_path, const fs::path& output_dir, cons
         std::string name = safe_filename(ent.name);
         if (name.empty()) continue;
 
-        fs::path p(name);
+        fs::path p(reinterpret_cast<const char8_t*>(name.c_str()));
         std::string ext = to_lower(p.extension().string());
         if (!allowed_exts.empty() && allowed_exts.find(ext) == allowed_exts.end()) continue;
 
@@ -310,7 +310,7 @@ int unpack_single_cmf(const fs::path& cmf_path, const fs::path& output_dir, cons
             raw.assign(data.begin() + offset, data.begin() + offset + ent.zsize);
         }
 
-        fs::path out_path = output_dir / name;
+        fs::path out_path = output_dir / fs::path(reinterpret_cast<const char8_t*>(name.c_str()));
         fs::create_directories(out_path.parent_path());
         std::ofstream fout(out_path, std::ios::binary);
         if (fout) {
@@ -323,10 +323,10 @@ int unpack_single_cmf(const fs::path& cmf_path, const fs::path& output_dir, cons
 
 // -------------------- 读取完整CMF数据 --------------------
 struct ParsedCMF {
-    int version;
+    int version = 0;
     std::vector<uint8_t> original_header;
     std::vector<CmfEntry> entries;
-    uint32_t version_offset;
+    uint32_t version_offset = 0;
     std::vector<uint8_t> padding;
 };
 
@@ -627,8 +627,8 @@ void process_repack(Config& config) {
     std::map<std::string, std::vector<uint8_t>> pak_all;
     for (const auto& entry : fs::recursive_directory_iterator(pak_dir)) {
         if (entry.is_regular_file()) {
-            std::string rel = fs::relative(entry.path(), pak_dir).string();
-            std::replace(rel.begin(), rel.end(), '\\', '/');
+            std::u8string u8rel = fs::relative(entry.path(), pak_dir).u8string();
+            std::string rel(u8rel.begin(), u8rel.end());
             std::ifstream f(entry.path(), std::ios::binary);
             if (f) {
                 pak_all[rel] = std::vector<uint8_t>((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
@@ -651,7 +651,7 @@ void process_repack(Config& config) {
 int main() {
     Config config = load_config();
     std::cout << "========================================================\n";
-    std::cout << "  Closers CMF TOOLS 解包/封包工具 v1.0(命令行版本)\n";
+    std::cout << "  Closers CMF TOOLS 解包/封包工具 v1.1(命令行版本)\n";
     std::cout << "  支持替换X/PNG/DDS/OGG\n";
     std::cout << "========================================================\n";
 
